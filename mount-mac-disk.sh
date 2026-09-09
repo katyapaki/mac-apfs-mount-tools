@@ -87,16 +87,25 @@ done
 echo "$MOUNTPOINT" > "$LASTPATH_DIR/$DEVNAME"
 
 PASS=$(zenity --password --title="Mac Disk" \
-    --text="Enter the password for $DEVICE:\n\n\xE2\x9A\xA0 This password will be visible to any other local user on this machine (e.g. via 'ps aux') for as long as the drive stays mounted.\n\n(If this disk turns out not to be encrypted, the password will simply be ignored.)")
+    --text="Enter the password for $DEVICE:\n\n(If this disk turns out not to be encrypted, the password will simply be ignored.)")
 if [ -z "$PASS" ]; then
     exit 1
 fi
 
+# Write the password to a private one-time file rather than passing it as a
+# command argument, so it never appears in `ps aux` for any process. apfs-fuse's
+# -R flag (via the helper) reads and deletes this file itself; the trap below
+# is just a safety net for exit paths that never reach that point (e.g. the
+# pkexec authentication being cancelled).
+PASSFILE=$(mktemp)
+trap 'rm -f "$PASSFILE"' EXIT
+printf '%s\n' "$PASS" > "$PASSFILE"
+unset PASS
+
 # One pkexec call covers checking encryption and mounting, so there's only
 # ever one authentication prompt regardless of what it finds.
-pkexec "$MOUNT_HELPER" "$APFSUTIL" "$APFS_FUSE" "$DEVICE" "$MOUNTPOINT" "$(id -u)" "$(id -g)" "$PASS"
+pkexec "$MOUNT_HELPER" "$APFSUTIL" "$APFS_FUSE" "$DEVICE" "$MOUNTPOINT" "$(id -u)" "$(id -g)" "$PASSFILE"
 RESULT=$?
-unset PASS
 
 if [ "$RESULT" -eq 42 ]; then
     zenity --error --title="Mac Disk" \

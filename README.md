@@ -5,7 +5,9 @@ read-only, from this Linux-on-USB install. Built because:
 
 - The Linux kernel's native APFS driver (`linux-apfs-rw`, installed via DKMS)
   cannot read encrypted volumes at all — only `apfs-fuse` (userspace, in
-  `~/apfs-fuse/build/`) supports FileVault passphrases.
+  `~/apfs-fuse/build/`, built from
+  [our fork](https://github.com/katyapaki/apfs-fuse)) supports FileVault
+  passphrases.
 - Unencrypted APFS disks already auto-mount fine via a plain double-click in
   the file manager (thanks to the DKMS module), so these tools only handle
   the encrypted case.
@@ -59,13 +61,14 @@ plain `pkexec`-owned FUSE mounts, not udisks2-managed devices. Always use the
 
 ## Known trade-offs
 
-- The FileVault password is passed as `apfs-fuse -r <password>`, so it's
-  visible via `ps aux` to any other local user on the machine for as long as
-  the mount is active. Acceptable for a personal single-user boot stick;
-  don't leave a disk mounted on a machine other people can poke at. (The
-  interactive password prompt was tried instead, piped through a pty via
-  `script`, but `apfs-fuse`'s `GetPassword()` proved unreliable outside a
-  real interactive terminal — `-r` is simpler and was chosen deliberately.)
+- The FileVault password never appears in any process's command line.
+  `apfs-fuse`'s built-in `-r <password>` flag does put it in argv (visible via
+  `ps aux` to any local user for as long as the mount is active), and its
+  interactive prompt requires a real terminal — piping it through a pty via
+  `script` was tried and proved unreliable. Instead, our fork adds a
+  `-R <path>` flag: the password is written to a one-time file (`mktemp`,
+  mode 600) that `apfs-fuse` reads and deletes immediately on startup, so the
+  plaintext value is never a command-line argument to anything.
 - Genuine integration with Thunar's device sidebar (double-click the actual
   drive icon to get a password prompt) isn't achievable without writing a
   custom udisks2/GVfs backend — `udisks2` only knows the kernel's own

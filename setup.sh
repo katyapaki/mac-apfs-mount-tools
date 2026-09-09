@@ -13,8 +13,10 @@ sudo apt install -y fuse3 libfuse3-dev zlib1g-dev cmake git bzip2 \
     libattr1-dev libicu-dev libbz2-dev build-essential
 
 echo "== Building apfs-fuse (userspace driver; handles encrypted volumes) =="
+echo "   Using our fork (adds -R <path> so the password never appears in ps aux),"
+echo "   not the upstream repo directly."
 if [ ! -d "$HOME/apfs-fuse" ]; then
-    git clone https://github.com/sgan81/apfs-fuse.git --recursive "$HOME/apfs-fuse"
+    git clone https://github.com/katyapaki/apfs-fuse.git --recursive "$HOME/apfs-fuse"
 fi
 mkdir -p "$HOME/apfs-fuse/build"
 (cd "$HOME/apfs-fuse/build" && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j"$(nproc)")
