@@ -12,10 +12,25 @@ read-only, from this Linux-on-USB install. Built because:
 
 ## Setup on a fresh install
 
-Run `bash setup.sh` — installs build deps, builds `apfs-fuse`, registers
-`linux-apfs-rw` with DKMS (replacing Ubuntu's stale packaged version), enables
+This directory is a git repo, pushed to
+[github.com/katyapaki/mac-apfs-mount-tools](https://github.com/katyapaki/mac-apfs-mount-tools)
+(private). To restore it on a new USB stick or after rebuilding the image:
+
+```
+gh repo clone katyapaki/mac-apfs-mount-tools ~/bin
+bash ~/bin/setup.sh
+```
+
+`setup.sh` installs build deps, builds `apfs-fuse`, registers `linux-apfs-rw`
+with DKMS (replacing Ubuntu's stale packaged version), enables
 `user_allow_other` in `/etc/fuse.conf`, and installs the desktop launchers.
 Needs `sudo`.
+
+After editing any script here, commit and push:
+
+```
+cd ~/bin && git add -A && git commit -m "describe the change" && git push
+```
 
 ## Usage
 
