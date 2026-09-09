@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Unmount Mac Disk
+Comment=Unmount the Mac disk mounted by Mount Mac Disk
+Exec=bash -c "$HOME/bin/unmount-mac-disk.sh"
+Icon=media-eject
+Terminal=false
+Categories=Utility;

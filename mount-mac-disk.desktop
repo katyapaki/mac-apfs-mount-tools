@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Mount Mac Disk
+Comment=Mount an encrypted APFS disk, internal or external (prompts for password)
+Exec=bash -c "$HOME/bin/mount-mac-disk.sh"
+Icon=drive-harddisk
+Terminal=false
+Categories=Utility;
