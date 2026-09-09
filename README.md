@@ -17,8 +17,8 @@ This directory is a git repo, pushed to
 (private). To restore it on a new USB stick or after rebuilding the image:
 
 ```
-gh repo clone katyapaki/mac-apfs-mount-tools ~/bin
-bash ~/bin/setup.sh
+gh repo clone katyapaki/mac-apfs-mount-tools ~/bin/mac-apfs-mount-tools
+bash ~/bin/mac-apfs-mount-tools/setup.sh
 ```
 
 `setup.sh` installs build deps, builds `apfs-fuse`, registers `linux-apfs-rw`
@@ -29,7 +29,7 @@ Needs `sudo`.
 After editing any script here, commit and push:
 
 ```
-cd ~/bin && git add -A && git commit -m "describe the change" && git push
+cd ~/bin/mac-apfs-mount-tools && git add -A && git commit -m "describe the change" && git push
 ```
 
 ## Usage
