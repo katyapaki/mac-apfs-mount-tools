@@ -1,13 +1,19 @@
 # Mac APFS mount tools
 
 Mounts an encrypted APFS disk (FileVault) from a Mac — internal or external —
-read-only, from this Linux-on-USB install. Built because:
+read-only, on Linux. Originally built for a persistent Linux-on-USB install
+that gets plugged into many different Mac computers, so the disk picker
+auto-detects whatever's connected rather than assuming a fixed machine — but
+nothing here is USB-specific; it works the same on a regular install. Built
+because:
 
 - The Linux kernel's native APFS driver (`linux-apfs-rw`, installed via DKMS)
   cannot read encrypted volumes at all — only `apfs-fuse` (userspace, in
   `~/apfs-fuse/build/`, built from
   [our fork](https://github.com/katyapaki/apfs-fuse)) supports FileVault
-  passphrases.
+  passphrases. The fork's only change (a `-R <path>` flag, see below) has a
+  [PR open against upstream](https://github.com/sgan81/apfs-fuse/pull/223) —
+  once that merges, `setup.sh` can go back to cloning upstream directly.
 - Unencrypted APFS disks already auto-mount fine via a plain double-click in
   the file manager (thanks to the DKMS module), so these tools only handle
   the encrypted case.
@@ -15,8 +21,8 @@ read-only, from this Linux-on-USB install. Built because:
 ## Setup on a fresh install
 
 This directory is a git repo, pushed to
-[github.com/katyapaki/mac-apfs-mount-tools](https://github.com/katyapaki/mac-apfs-mount-tools)
-(private). To restore it on a new USB stick or after rebuilding the image:
+[github.com/katyapaki/mac-apfs-mount-tools](https://github.com/katyapaki/mac-apfs-mount-tools).
+To set it up on a new machine:
 
 ```
 gh repo clone katyapaki/mac-apfs-mount-tools ~/bin/mac-apfs-mount-tools
@@ -76,4 +82,8 @@ plain `pkexec`-owned FUSE mounts, not udisks2-managed devices. Always use the
   bookmark is the practical middle ground.
 - `linux-apfs-rw` (kernel module) is registered with DKMS with
   `AUTOINSTALL="yes"`, so it rebuilds automatically on future kernel
-  upgrades on this machine — no manual steps needed for that part.
+  upgrades — no manual steps needed for that part.
+
+## License
+
+[MIT](LICENSE)
